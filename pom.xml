@@ -11,6 +11,12 @@
 	</parent>
 
 	<name>Explore With Me</name>
+	<modules>
+		<module>stat_svc</module>
+		<module>stat_svc/dto</module>
+		<module>stat_svc/client</module>
+		<module>stat_svc/service</module>
+	</modules>
 
 	<groupId>ru.practicum</groupId>
 	<artifactId>explore-with-me</artifactId>
