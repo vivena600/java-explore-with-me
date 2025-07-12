@@ -17,6 +17,12 @@ public class ErrorHandler {
     public Map<String, String>  handleBadRequest(BadRequestException ex) {
         log.error("Bad request: {}", ex.getMessage());
         return Map.of("bad request", ex.getMessage());
+    }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String>  handleBadRequest(InternalError ex) {
+        log.error("InternalError: {}", ex.getMessage());
+        return Map.of("bad request", ex.getMessage());
     }
 }
