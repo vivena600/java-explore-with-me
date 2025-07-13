@@ -6,6 +6,5 @@ import org.springframework.stereotype.Component;
 public class StatsDto {
     private String app;
     private String uri;
-    private String hits;
-
+    private Integer hits;
 }

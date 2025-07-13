@@ -1,14 +1,27 @@
 services:
   stats-server:
+    build: stat_svc/service
+    container_name: stat
     ports:
       - "9090:9090"
+    depends_on:
+      - stats-db
 
   stats-db:
     image: postgres:16.1
+    container_name: stat-db
+    ports:
+      - "6541:5432"
 
   ewm-svc:
+    container_name: ewm
     ports:
       - "8080:8080"
+    depends_on:
+      - ewm-db
 
   ewm-db:
     image: postgres:16.1
+    container_name: ewm-db
+    ports:
+    - "6542:5432"

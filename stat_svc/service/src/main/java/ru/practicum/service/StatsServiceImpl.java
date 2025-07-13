@@ -7,10 +7,12 @@ import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatsDto;
 import ru.practicum.mapper.HitMapper;
 import ru.practicum.module.Hit;
+import ru.practicum.module.Stat;
 import ru.practicum.repository.StatsRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,10 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public List<StatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uri, Boolean unique) {
-        return List.of();
+        log.info("Получение статистики");
+        List<Stat> stats = unique ? statsRepository.findHitUniqueIp(start, end, uri) :
+                statsRepository.findHitNotUniqueIp(start, end, uri);
+        return stats.stream().map(hitMapper::mapStatsDto)
+                .collect(Collectors.toList());
     }
 }
