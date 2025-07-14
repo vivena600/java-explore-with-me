@@ -67,7 +67,7 @@ public class StatsServiceImplTest {
     void getStatsUniqueIp() {
         List<String> uris = List.of(hit.getUri());
 
-        when(repository.findHitUniqueIp(any(), any(), any()))
+        when(repository.findHitUniqueIpBetweenUri(any(), any(), any()))
                 .thenReturn(List.of(stat));
         when(hitMapper.mapStatsDto(any(Stat.class))).thenReturn(statDto);
 
@@ -77,7 +77,7 @@ public class StatsServiceImplTest {
         assertEquals(1, result.size());
 
         verify(repository, times(1))
-                .findHitUniqueIp(now.minusDays(1), now.plusDays(1), uris);
+                .findHitUniqueIpBetweenUri(now.minusDays(1), now.plusDays(1), uris);
         verify(hitMapper, times(1)).mapStatsDto(stat);
     }
 }

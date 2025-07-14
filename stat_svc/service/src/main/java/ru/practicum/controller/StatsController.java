@@ -42,7 +42,7 @@ public class StatsController {
      * Get /stats - запрос на получение статистики по посещениям
      * @param start - Дата и время начала диапазона
      * @param end - Дата и время конца диапазона
-     * @param uri - Список uri, для которых нужно выгрузить статистику
+     * @param uris - Список uri, для которых нужно выгрузить статистику
      * @param unique - Учитывать ли только уникальные посещения
      */
     @GetMapping("/stats")
@@ -51,11 +51,11 @@ public class StatsController {
                                                LocalDateTime start,
                                                    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                                 LocalDateTime end,
-                                                   @RequestParam List<String> uri,
+                                                   @RequestParam(required = false) List<String> uris,
                                                    @RequestParam(defaultValue = "false") Boolean unique) {
         log.info("GET /stats");
         validationService.checkStartAndEndTime(start, end);
-        List<StatsDto> result = statsService.getStats(start, end, uri, unique);
+        List<StatsDto> result = statsService.getStats(start, end, uris, unique);
         return ResponseEntity.ok(result);
     }
 }

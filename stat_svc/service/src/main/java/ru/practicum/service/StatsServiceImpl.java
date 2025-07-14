@@ -11,6 +11,7 @@ import ru.practicum.module.Stat;
 import ru.practicum.repository.StatsRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +34,14 @@ public class StatsServiceImpl implements StatsService {
     @Override
     public List<StatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uri, Boolean unique) {
         log.info("Получение статистики");
-        List<Stat> stats = unique ? statsRepository.findHitUniqueIp(start, end, uri) :
-                statsRepository.findHitNotUniqueIp(start, end, uri);
+        List<Stat> stats;
+        if (uri == null || uri.isEmpty()) {
+            stats = unique ? statsRepository.findHitUniqueIp(start, end) :
+                    statsRepository.findHitNotUniqueIp(start, end);
+        } else {
+            stats = unique ? statsRepository.findHitUniqueIpBetweenUri(start, end, uri) :
+                    statsRepository.findHitNotUniqueIpBetweenUri(start, end, uri);
+        }
         return stats.stream().map(hitMapper::mapStatsDto)
                 .collect(Collectors.toList());
     }
