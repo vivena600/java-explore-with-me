@@ -24,8 +24,9 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public HitDto saveStats(HitDto hit) {
-        log.info("Сохранение статистики");
+        log.info("Сохранение статистики {}", hit.toString());
         Hit entity = hitMapper.mapHitDto(hit);
+        log.info("Mapped entity: {}", entity);
         return hitMapper.mapHit(statsRepository.save(entity));
     }
 

@@ -17,8 +17,9 @@ public interface StatsRepository extends JpaRepository<Hit, Long> {
             " FROM Hit h " +
             "WHERE h.timestamp >= :start " +
             "AND h.timestamp <= :end " +
-            "AND h.uri IN :uris " +
-            "GROUP BY h.ip")
+            "AND h.uri IN :uri " +
+            "GROUP BY h.app, h.uri " +
+            "ORDER BY COUNT(DISTINCT h.ip) DESC")
     List<Stat> findHitUniqueIp(@Param("start") LocalDateTime start,
                                @Param("end") LocalDateTime end,
                                @Param("uri") List<String> uri);
@@ -26,7 +27,9 @@ public interface StatsRepository extends JpaRepository<Hit, Long> {
     @Query("SELECT new ru.practicum.module.Stat(h.app, h.uri, COUNT(h.ip)) FROM Hit h " +
             "WHERE h.timestamp >= :start " +
             "AND h.timestamp <= :end " +
-            "AND h.uri IN :uris ")
+            "AND h.uri IN :uri " +
+            "GROUP BY h.app, h.uri " +
+            "ORDER BY COUNT(h.ip) DESC")
     List<Stat> findHitNotUniqueIp(@Param("start") LocalDateTime start,
                                  @Param("end") LocalDateTime end,
                                  @Param("uri") List<String> uri);

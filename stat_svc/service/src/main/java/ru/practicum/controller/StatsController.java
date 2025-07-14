@@ -1,11 +1,13 @@
 package ru.practicum.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatsDto;
@@ -18,6 +20,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@Validated
 public class StatsController {
     private final ValidationService validationService;
     private final StatsService statsService;
@@ -29,7 +32,7 @@ public class StatsController {
      */
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<HitDto> saveStats(@RequestBody HitDto dto) {
+    public ResponseEntity<HitDto> saveStats(@RequestBody @Valid HitDto dto) {
         log.info("POST /hit");
         HitDto result = statsService.saveStats(dto);
         return ResponseEntity.ok(result);
