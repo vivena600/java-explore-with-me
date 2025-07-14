@@ -6,7 +6,7 @@ import ru.practicum.dto.StatsDto;
 import ru.practicum.module.Hit;
 import ru.practicum.module.Stat;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface HitMapper {
     HitDto mapHit(Hit hit);
 

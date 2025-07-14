@@ -1,9 +1,15 @@
 services:
   stats-server:
-    build: stat_svc/service
+    build:
+      context: stat_svc/service
+      dockerfile: Dockerfile
     container_name: stat
     ports:
       - "9090:9090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
+      - SPRING_DATASOURCE_USERNAME=stats
+      - SPRING_DATASOURCE_PASSWORD=stats
     depends_on:
       - stats-db
 
@@ -12,8 +18,15 @@ services:
     container_name: stat-db
     ports:
       - "6541:5432"
+    environment:
+      - POSTGRES_DB=stats
+      - POSTGRES_USER=stats
+      - POSTGRES_PASSWORD=stats
 
   ewm-svc:
+    build:
+      context: ewm-svc
+      dockerfile: Dockerfile
     container_name: ewm
     ports:
       - "8080:8080"
