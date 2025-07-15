@@ -3,11 +3,9 @@ package ru.practicum.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Component
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

@@ -3,6 +3,7 @@ package ru.practicum.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatsDto;
 import ru.practicum.mapper.HitMapper;
@@ -22,6 +23,7 @@ public class StatsServiceImpl implements StatsService {
     private final StatsRepository statsRepository;
     private final HitMapper hitMapper;
 
+    @Transactional
     @Override
     public HitDto saveStats(HitDto hit) {
         log.info("Сохранение статистики {}", hit.toString());
@@ -30,6 +32,7 @@ public class StatsServiceImpl implements StatsService {
         return hitMapper.mapHit(statsRepository.save(entity));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<StatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uri, Boolean unique) {
         log.info("Получение статистики");
