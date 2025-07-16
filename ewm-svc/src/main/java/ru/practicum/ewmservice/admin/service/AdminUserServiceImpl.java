@@ -2,6 +2,7 @@ package ru.practicum.ewmservice.admin.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmservice.base.dto.AddUserDto;
@@ -23,7 +24,19 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Transactional(readOnly = true)
     @Override
     public List<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
-        return List.of();
+        if (ids == null || ids.isEmpty()) {
+            log.info("get users from {} size {}", from, size);
+            return userRepository.findAll(PageRequest.of(from, size))
+                    .stream()
+                    .map(userMapper::mapUser)
+                    .toList();
+        } else {
+            log.info("getUsers ids: {}", ids);
+            return userRepository.findAllById(ids)
+                    .stream()
+                    .map(userMapper::mapUser)
+                    .toList();
+        }
     }
 
     @Transactional

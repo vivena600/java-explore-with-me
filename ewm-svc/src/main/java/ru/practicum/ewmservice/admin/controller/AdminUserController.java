@@ -22,12 +22,14 @@ import java.util.List;
 public class AdminUserController {
     private final AdminUserService userService;
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ResponseEntity<List<UserDto>> getUser(@RequestParam List<Long> ids,
                                                  @RequestParam(defaultValue = "0") Integer from,
                                                  @RequestParam(defaultValue = "10") Integer size) {
-
-        return null;
+        log.info("GET /admin/users");
+        List<UserDto> result = userService.getUsers(ids, from, size);
+        return ResponseEntity.ok(result);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -35,7 +37,7 @@ public class AdminUserController {
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid AddUserDto userDto) {
         log.info("POST /admin/users");
         UserDto result = userService.createUser(userDto);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
