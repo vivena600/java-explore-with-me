@@ -31,6 +31,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     public CategoryDto updateCategory(Long id, AddCategoryDto addCategoryDto) {
         log.info("updated category with id {}", id);
         Category category = checkCategory(id);
+        category.setName(addCategoryDto.getName());
         return categoryMapper.mapCategory(categoryRepository.save(category));
     }
 
