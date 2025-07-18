@@ -34,10 +34,20 @@ public class PrivateEventController {
 
     @GetMapping
     public ResponseEntity<List<ShortEventDto>> getEventsUser(@PathVariable @Positive Long userId,
-                                                             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
-                                                             @RequestParam(defaultValue = "10") @PositiveOrZero Integer size) {
+                                                             @RequestParam(defaultValue = "0")
+                                                             @PositiveOrZero Integer from,
+                                                             @RequestParam(defaultValue = "10")
+                                                             @PositiveOrZero Integer size) {
         log.info("GET /users/{}/events", userId);
         List<ShortEventDto> result = eventService.getEvents(userId, from, size);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<FullEventDto> getEventById(@PathVariable @Positive Long userId,
+                                                     @PathVariable @Positive Long eventId) {
+        log.info("GET /users/{}/events/{}", userId, eventId);
+        FullEventDto result = eventService.getEventById(userId, eventId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }

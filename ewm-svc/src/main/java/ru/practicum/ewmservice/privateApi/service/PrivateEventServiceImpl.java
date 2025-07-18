@@ -71,6 +71,17 @@ public class PrivateEventServiceImpl implements PrivateEventService {
                 .toList();
     }
 
+    @Override
+    public FullEventDto getEventById(Long userId, Long eventId) {
+        log.info("Отправка запроса на получение события по его id {}", eventId);
+        Event event = eventRepository.findByIdAndUserId(userId, eventId)
+                .orElseThrow(() -> new NotFoundException("Event not found with id = " + eventId +
+                        " and userId = " + userId));
+        UserShortDto userShortDto = userMapper.mapUserShortDto(event.getUserId());
+        CategoryDto categoryDto = categoryMapper.mapCategory(event.getCategoryId());
+        return eventMapper.toFullEventDto(event, userShortDto, categoryDto);
+    }
+
     private Category checkCategoryById(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Category with id= " + id + " was not found"));
@@ -79,6 +90,11 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     private User checkUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id= " + id + " was not found"));
+    }
+
+    private Event checkEventById(Long id) {
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Event with id= " + id + " was not found"));
     }
 
     private void checkEventTime(LocalDateTime event) {
