@@ -1,7 +1,7 @@
 package ru.practicum.ewmservice.admin.service;
 
-import ru.practicum.ewmservice.base.dto.AddUserDto;
-import ru.practicum.ewmservice.base.dto.UserDto;
+import ru.practicum.ewmservice.base.dto.user.AddUserDto;
+import ru.practicum.ewmservice.base.dto.user.UserDto;
 
 import java.util.List;
 

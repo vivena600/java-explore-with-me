@@ -8,12 +8,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import ru.practicum.ewmservice.admin.mapper.UserMapper;
 import ru.practicum.ewmservice.admin.service.AdminUserServiceImpl;
-import ru.practicum.ewmservice.base.dto.AddUserDto;
-import ru.practicum.ewmservice.base.dto.UserDto;
+import ru.practicum.ewmservice.base.dto.user.AddUserDto;
+import ru.practicum.ewmservice.base.dto.user.UserDto;
 import ru.practicum.ewmservice.base.model.User;
 import ru.practicum.ewmservice.base.repository.UserRepository;
 

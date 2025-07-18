@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmservice.admin.mapper.CategoryMapper;
-import ru.practicum.ewmservice.base.dto.CategoryDto;
+import ru.practicum.ewmservice.base.dto.category.CategoryDto;
 import ru.practicum.ewmservice.base.exception.NotFoundException;
 import ru.practicum.ewmservice.base.model.Category;
 import ru.practicum.ewmservice.base.repository.CategoryRepository;

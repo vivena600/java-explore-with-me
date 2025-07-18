@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmservice.admin.service.AdminCategoryService;
-import ru.practicum.ewmservice.base.dto.AddCategoryDto;
-import ru.practicum.ewmservice.base.dto.CategoryDto;
+import ru.practicum.ewmservice.base.dto.category.AddCategoryDto;
+import ru.practicum.ewmservice.base.dto.category.CategoryDto;
 
 @RestController
 @RequestMapping("/admin/categories")

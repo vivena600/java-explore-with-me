@@ -1,6 +1,6 @@
 package ru.practicum.ewmservice.publicApi.service;
 
-import ru.practicum.ewmservice.base.dto.CategoryDto;
+import ru.practicum.ewmservice.base.dto.category.CategoryDto;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package ru.practicum.ewmservice.base.dto;
+package ru.practicum.ewmservice.base.dto.category;
 
 import lombok.Getter;
 import lombok.Setter;
