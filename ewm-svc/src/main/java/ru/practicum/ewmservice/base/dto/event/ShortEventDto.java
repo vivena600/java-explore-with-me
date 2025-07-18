@@ -17,9 +17,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 public class ShortEventDto {
+    private Long id;
     private UserShortDto initiator;
     private String annotation;
-    private CategoryDto categoryId;
+    private CategoryDto category;
     private Boolean paid;
     private String title;
 

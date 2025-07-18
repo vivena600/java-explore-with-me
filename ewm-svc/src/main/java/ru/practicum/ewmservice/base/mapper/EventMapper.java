@@ -50,4 +50,16 @@
                     .publishedOn(event.getPublishedOn())
                     .build();
         }
+
+        default ShortEventDto toShortEventDto(Event event, UserShortDto user, CategoryDto category) {
+            return ShortEventDto.builder()
+                    .id(event.getId())
+                    .title(event.getTitle())
+                    .eventDate(event.getDate())
+                    .paid(event.getPaid())
+                    .initiator(user)
+                    .category(category)
+                    .annotation(event.getAnnotation())
+                    .build();
+        }
     }

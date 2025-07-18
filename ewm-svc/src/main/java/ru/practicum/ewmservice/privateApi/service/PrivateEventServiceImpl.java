@@ -2,6 +2,7 @@ package ru.practicum.ewmservice.privateApi.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmservice.admin.mapper.CategoryMapper;
@@ -9,6 +10,7 @@ import ru.practicum.ewmservice.admin.mapper.UserMapper;
 import ru.practicum.ewmservice.base.dto.category.CategoryDto;
 import ru.practicum.ewmservice.base.dto.event.AddEventDto;
 import ru.practicum.ewmservice.base.dto.event.FullEventDto;
+import ru.practicum.ewmservice.base.dto.event.ShortEventDto;
 import ru.practicum.ewmservice.base.dto.user.UserShortDto;
 import ru.practicum.ewmservice.base.exception.ConflictException;
 import ru.practicum.ewmservice.base.exception.NotFoundException;
@@ -21,6 +23,7 @@ import ru.practicum.ewmservice.base.repository.EventRepository;
 import ru.practicum.ewmservice.base.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +57,18 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         UserShortDto userShortDto = userMapper.mapUserShortDto(user);
         CategoryDto categoryDto = categoryMapper.mapCategory(category);
         return eventMapper.toFullEventDto(eventRepository.save(event), userShortDto, categoryDto);
+    }
+
+    @Override
+    public List<ShortEventDto> getEvents(Long userId, Integer from, Integer size) {
+        log.info("отправка запроса на получение событий пользователя с id {}", userId);
+        User user = checkUserById(userId);
+        UserShortDto shortEventDto = userMapper.mapUserShortDto(user);
+        return eventRepository.findAll(PageRequest.of(from, size))
+                .stream()
+                .map(event -> eventMapper.toShortEventDto(event, shortEventDto,
+                        categoryMapper.mapCategory(event.getCategoryId())))
+                .toList();
     }
 
     private Category checkCategoryById(Long id) {
