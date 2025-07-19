@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.ewmservice.base.dto.category.CategoryDto;
 import ru.practicum.ewmservice.base.dto.user.UserShortDto;
+import ru.practicum.ewmservice.base.enums.EventState;
 
 import java.time.LocalDateTime;
 

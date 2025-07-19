@@ -16,7 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import ru.practicum.ewmservice.base.dto.event.EventState;
+import ru.practicum.ewmservice.base.enums.EventState;
 
 import java.time.LocalDateTime;
 

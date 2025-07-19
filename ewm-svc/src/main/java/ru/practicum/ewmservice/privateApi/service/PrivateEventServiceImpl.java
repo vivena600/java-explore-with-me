@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmservice.admin.mapper.CategoryMapper;
 import ru.practicum.ewmservice.admin.mapper.UserMapper;
 import ru.practicum.ewmservice.base.dto.category.CategoryDto;
-import ru.practicum.ewmservice.base.dto.event.AddEventDto;
-import ru.practicum.ewmservice.base.dto.event.FullEventDto;
-import ru.practicum.ewmservice.base.dto.event.ShortEventDto;
+import ru.practicum.ewmservice.base.dto.event.*;
 import ru.practicum.ewmservice.base.dto.user.UserShortDto;
+import ru.practicum.ewmservice.base.enums.EventState;
+import ru.practicum.ewmservice.base.enums.EventStateAction;
 import ru.practicum.ewmservice.base.exception.ConflictException;
 import ru.practicum.ewmservice.base.exception.NotFoundException;
 import ru.practicum.ewmservice.base.mapper.EventMapper;
@@ -74,12 +74,63 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     public FullEventDto getEventById(Long userId, Long eventId) {
         log.info("Отправка запроса на получение события по его id {}", eventId);
-        Event event = eventRepository.findByIdAndUserId(userId, eventId)
-                .orElseThrow(() -> new NotFoundException("Event not found with id = " + eventId +
-                        " and userId = " + userId));
+        Event event = checkEventByIdAndUserId(eventId, userId);
         UserShortDto userShortDto = userMapper.mapUserShortDto(event.getUserId());
         CategoryDto categoryDto = categoryMapper.mapCategory(event.getCategoryId());
         return eventMapper.toFullEventDto(event, userShortDto, categoryDto);
+    }
+
+    @Override
+    public FullEventDto updateEvent(Long userId, Long eventId, UpdateEventUserDto dto) {
+        User user = checkUserById(userId);
+        Event oldEvent = checkEventByIdAndUserId(eventId, userId);
+        if (!(oldEvent.getState().equals(EventState.CANCELED) || oldEvent.getState().equals(EventState.PENDING))) {
+            throw new ConflictException("Only pending or canceled events can be changed");
+        }
+
+        if (dto.getCategoryId() != null) {
+            Category category = checkCategoryById(dto.getCategoryId());
+            oldEvent.setCategoryId(category);
+        }
+
+        if (dto.getStateAction() == EventStateAction.CANCEL_REVIEW) {
+            oldEvent.setState(EventState.CANCELED);
+        } else {
+            oldEvent.setState(EventState.PENDING);
+        }
+
+        if (dto.getEventDate() != null) {
+            checkEventTime(dto.getEventDate());
+            oldEvent.setDate(dto.getEventDate());
+        }
+
+        if (dto.getDescription() != null) {
+            oldEvent.setDescription(dto.getDescription());
+        }
+        if (dto.getPaid() != null) {
+            oldEvent.setPaid(dto.getPaid());
+        }
+
+        if (dto.getAnnotation() != null) {
+            oldEvent.setAnnotation(dto.getAnnotation());
+        }
+
+        if (dto.getTitle() != null) {
+            oldEvent.setTitle(dto.getTitle());
+        }
+
+        if (dto.getLocation() != null) {
+            oldEvent.setLat(dto.getLocation().getLat());
+            oldEvent.setLon(dto.getLocation().getLon());
+        }
+
+        if (dto.getParticipantLimit() != null) {
+            oldEvent.setParticipantLimit(dto.getParticipantLimit());
+        }
+
+        return eventMapper.toFullEventDto(oldEvent,
+                userMapper.mapUserShortDto(user),
+                categoryMapper.mapCategory(oldEvent.getCategoryId()));
     }
 
     private Category checkCategoryById(Long id) {
@@ -92,9 +143,10 @@ public class PrivateEventServiceImpl implements PrivateEventService {
                 .orElseThrow(() -> new NotFoundException("User with id= " + id + " was not found"));
     }
 
-    private Event checkEventById(Long id) {
-        return eventRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Event with id= " + id + " was not found"));
+    private Event checkEventByIdAndUserId(Long eventId, Long userId) {
+        return eventRepository.findByIdAndUserId(userId, eventId)
+                .orElseThrow(() -> new NotFoundException("Event not found with id = " + eventId +
+                        " and userId = " + userId));
     }
 
     private void checkEventTime(LocalDateTime event) {

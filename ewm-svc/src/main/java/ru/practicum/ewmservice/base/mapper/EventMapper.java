@@ -4,6 +4,7 @@
     import ru.practicum.ewmservice.base.dto.category.CategoryDto;
     import ru.practicum.ewmservice.base.dto.event.*;
     import ru.practicum.ewmservice.base.dto.user.UserShortDto;
+    import ru.practicum.ewmservice.base.enums.EventState;
     import ru.practicum.ewmservice.base.model.Category;
     import ru.practicum.ewmservice.base.model.Event;
 

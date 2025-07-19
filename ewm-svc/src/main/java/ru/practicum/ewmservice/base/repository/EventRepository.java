@@ -7,10 +7,11 @@ import ru.practicum.ewmservice.base.model.Event;
 
 import java.util.Optional;
 
-public interface EventRepository extends JpaRepository<Event, Long> {
+public interface EventRepository extends JpaRepository<Event, Long>, EventRepositoryCustom {
 
     @Query("SELECT e FROM Event e " +
             "WHERE e.id = :eventId AND e.userId.id = :userId")
     Optional<Event> findByIdAndUserId(@Param("userId") Long userId,
                                       @Param("eventId") Long eventId);
+
 }

@@ -1,4 +1,4 @@
-package ru.practicum.ewmservice.base.dto.event;
+package ru.practicum.ewmservice.base.enums;
 
 public enum EventState {
     PENDING,
