@@ -4,11 +4,9 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmservice.admin.dto.RequestGetEventsDto;
+import ru.practicum.ewmservice.admin.dto.RequestUpdateEventDto;
 import ru.practicum.ewmservice.admin.service.AdminEventService;
 import ru.practicum.ewmservice.base.dto.event.FullEventDto;
 
@@ -52,6 +50,14 @@ public class AdminEventController {
                 .size(size)
                 .build();
         List<FullEventDto> result = eventService.getEvents(param);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @PatchMapping("/{eventId}")
+    public ResponseEntity<FullEventDto> updateEvent(@RequestParam Long eventId,
+                                    @RequestBody RequestUpdateEventDto eventDto) {
+        log.info("PATCH /admin/events/{}", eventId);
+        FullEventDto result = eventService.updateEvent(eventId, eventDto);
         return ResponseEntity.ok().body(result);
     }
 }
