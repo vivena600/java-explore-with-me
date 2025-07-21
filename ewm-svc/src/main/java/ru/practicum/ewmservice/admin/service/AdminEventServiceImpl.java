@@ -65,20 +65,46 @@ public class AdminEventServiceImpl implements AdminEventService {
             }
         }
 
-        checkEventDate(eventDto.getEventDate());
-        oldEvent.setPublishedOn(LocalDateTime.now());
-        oldEvent.setDate(eventDto.getEventDate());
-        oldEvent.setDescription(eventDto.getDescription());
-        oldEvent.setTitle(eventDto.getTitle());
-        oldEvent.setLon(eventDto.getLocation().getLon());
-        oldEvent.setLat(eventDto.getLocation().getLat());
-        oldEvent.setParticipantLimit(eventDto.getParticipantLimit());
-        oldEvent.setAnnotation(eventDto.getAnnotation());
-        oldEvent.setParticipantLimit(eventDto.getParticipantLimit());
-        oldEvent.setRequestModeration(eventDto.getRequestModeration());
+        if (eventDto.getEventDate() != null) {
+            checkEventDate(eventDto.getEventDate());
+        }
 
-        Category category = checkCategoryById(eventDto.getCategory());
-        oldEvent.setCategoryId(category);
+        oldEvent.setPublishedOn(LocalDateTime.now());
+
+        if (eventDto.getEventDate() != null) {
+            oldEvent.setDate(eventDto.getEventDate());
+        }
+
+        if (eventDto.getDescription() != null) {
+            oldEvent.setDescription(eventDto.getDescription());
+        }
+
+        if (eventDto.getTitle() != null) {
+            oldEvent.setTitle(eventDto.getTitle());
+        }
+
+        if (eventDto.getLocation() != null) {
+            oldEvent.setLon(eventDto.getLocation().getLon());
+            oldEvent.setLat(eventDto.getLocation().getLat());
+        }
+
+        if (eventDto.getParticipantLimit() != null) {
+            oldEvent.setParticipantLimit(eventDto.getParticipantLimit());
+        }
+
+        if (eventDto.getAnnotation() != null) {
+            oldEvent.setAnnotation(eventDto.getAnnotation());
+        }
+
+        if (eventDto.getRequestModeration() != null) {
+            oldEvent.setRequestModeration(eventDto.getRequestModeration());
+        }
+
+        Category category = oldEvent.getCategoryId();
+        if (eventDto.getCategory() != null) {
+            category = checkCategoryById(eventDto.getCategory());
+            oldEvent.setCategoryId(category);
+        }
 
         Event savedEvent = eventRepository.save(oldEvent);
         return eventMapper.toFullEventDto(savedEvent, userMapper.mapUserShortDto(savedEvent.getUserId()),

@@ -15,14 +15,14 @@ public interface RequestMapper {
                 .created(request.getCreated())
                 .requester(request.getUser().getId())
                 .event(request.getEvent().getId())
-                .state(request.getState())
+                .status(request.getState())
                 .build();
     }
 
     default Request fromDto(ParticipationRequestDto dto, User user, Event event) {
         return Request.builder()
                 .created(dto.getCreated())
-                .state(dto.getState())
+                .state(dto.getStatus())
                 .event(event)
                 .user(user)
                 .build();

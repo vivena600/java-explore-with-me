@@ -55,13 +55,13 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
             throw new ConflictException("You cannot participate in an unpublished event");
         }
 
-        if (event.getParticipantLimit() < event.getConfirmedRequests()) {
+        if (event.getConfirmedRequests() != null && event.getParticipantLimit() < event.getConfirmedRequests()) {
             throw new ConflictException("Event participant limit exceeded");
         }
 
         ParticipationRequestDto createdRequest = ParticipationRequestDto.builder()
                 .created(LocalDateTime.now())
-                .state(!event.getRequestModeration() ? StateRequestEvent.PUBLISHED : StateRequestEvent.PENDING)
+                .status(!event.getRequestModeration() ? StateRequestEvent.PUBLISHED : StateRequestEvent.PENDING)
                 .requester(user.getId())
                 .event(event.getId())
                 .build();
