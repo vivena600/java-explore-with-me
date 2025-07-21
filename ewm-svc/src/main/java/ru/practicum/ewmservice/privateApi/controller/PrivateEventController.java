@@ -9,11 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewmservice.base.dto.event.AddEventDto;
-import ru.practicum.ewmservice.base.dto.event.FullEventDto;
-import ru.practicum.ewmservice.base.dto.event.ShortEventDto;
-import ru.practicum.ewmservice.base.dto.event.UpdateEventUserDto;
+import ru.practicum.ewmservice.base.dto.event.*;
 import ru.practicum.ewmservice.privateApi.service.PrivateEventService;
+import ru.practicum.ewmservice.privateApi.service.PrivateRequestService;
 
 import java.util.List;
 
@@ -24,10 +22,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PrivateEventController {
     private final PrivateEventService eventService;
+    private final PrivateRequestService requestService;
 
     @PostMapping
     public ResponseEntity<FullEventDto> createEvent(@RequestBody @Valid AddEventDto dto,
-                                                    @PathVariable Long userId) {
+                                                    @PathVariable @Positive Long userId) {
         log.info("POST /users/{}/events", userId);
         FullEventDto result = eventService.createEvent(userId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
@@ -59,5 +58,12 @@ public class PrivateEventController {
         log.info("PATCH /users/{}/events/{}", userId, eventId);
         FullEventDto result = eventService.updateEvent(userId, eventId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/{eventId}/requests")
+    public ResponseEntity<List<ParticipationRequestDto>> getRequest(@PathVariable @Positive Long userId,
+                                                                    @PathVariable @Positive Long eventId) {
+        log.info("GET /users/{}/requests/{}", userId, eventId);
+        return ResponseEntity.status(HttpStatus.OK).body(requestService.getRequest(userId, eventId));
     }
 }

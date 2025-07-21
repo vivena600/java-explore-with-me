@@ -54,7 +54,7 @@ public class AdminEventController {
     }
 
     @PatchMapping("/{eventId}")
-    public ResponseEntity<FullEventDto> updateEvent(@RequestParam Long eventId,
+    public ResponseEntity<FullEventDto> updateEvent(@PathVariable Long eventId,
                                     @RequestBody RequestUpdateEventDto eventDto) {
         log.info("PATCH /admin/events/{}", eventId);
         FullEventDto result = eventService.updateEvent(eventId, eventDto);

@@ -1,9 +1,6 @@
 package ru.practicum.ewmservice.privateApi.service;
 
-import ru.practicum.ewmservice.base.dto.event.AddEventDto;
-import ru.practicum.ewmservice.base.dto.event.FullEventDto;
-import ru.practicum.ewmservice.base.dto.event.ShortEventDto;
-import ru.practicum.ewmservice.base.dto.event.UpdateEventUserDto;
+import ru.practicum.ewmservice.base.dto.event.*;
 
 import java.util.List;
 

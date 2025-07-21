@@ -77,7 +77,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         oldEvent.setParticipantLimit(eventDto.getParticipantLimit());
         oldEvent.setRequestModeration(eventDto.getRequestModeration());
 
-        Category category = checkCategoryById(eventDto.getCategoryId());
+        Category category = checkCategoryById(eventDto.getCategory());
         oldEvent.setCategoryId(category);
 
         Event savedEvent = eventRepository.save(oldEvent);

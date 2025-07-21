@@ -19,7 +19,7 @@ public class RequestUpdateEventDto {
     @Length(max = 2000, min = 20)
     private String annotation;
 
-    private Long categoryId;
+    private Long category;
 
     @Length(max = 7000, min = 20)
     private String description;

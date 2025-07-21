@@ -15,6 +15,17 @@ import java.util.List;
 @Slf4j
 public class PublicEventController {
 
+    /***
+     * Писк полной информации о событиях
+     * @param text - поисковый запрос
+     * @param paid
+     * @param categories - список id категорий
+     * @param rangeStart - дата и время начала диапазона
+     * @param rangeEnd - дата и конец времени диапазона
+     * @param from - количество значений, которые необходимо пропустить (по умолчанию 0)
+     * @param size - количество событий, которых необходимо вывести (по умолчанию 10)
+     * @return
+     */
     @GetMapping
     ResponseEntity<ShortEventDto> getEvents(@RequestParam(required = false) String text,
                                             @RequestParam(required = false)  List<Long> categories,

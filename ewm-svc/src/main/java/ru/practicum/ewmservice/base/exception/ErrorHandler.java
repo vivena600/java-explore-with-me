@@ -50,6 +50,19 @@ public class ErrorHandler {
                 .build();
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiError handleUnknownError(Exception ex) {
+        log.error("UNHANDLED EXCEPTION: {}", ex.getMessage(), ex);
+        return ApiError.builder()
+                .errors(getErrorMessages(ex))
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .message(ex.getMessage())
+                .reason("Unexpected internal server error")
+                .build();
+    }
+
+
     private static List<String> getErrorMessages(Throwable throwable) {
         List<String> errorMessages = new ArrayList<>();
 
