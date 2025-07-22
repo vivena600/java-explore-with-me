@@ -1,8 +1,10 @@
 package ru.practicum.ewmservice.base.exception;
 
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,9 +16,33 @@ import java.util.List;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError badRequest(final Exception ex) {
+    public ApiError badRequest(final BadRequestException ex) {
+        log.error("Bad request: {}", ex.getMessage(), ex);
+        return ApiError.builder()
+                .errors(getErrorMessages(ex))
+                .status(HttpStatus.BAD_REQUEST)
+                .message(ex.getMessage())
+                .reason("Incorrectly made request.")
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError validationException(final ValidationException ex) {
+        log.error("Bad request: {}", ex.getMessage(), ex);
+        return ApiError.builder()
+                .errors(getErrorMessages(ex))
+                .status(HttpStatus.BAD_REQUEST)
+                .message(ex.getMessage())
+                .reason("Incorrectly made request.")
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError methodValidationException(final MethodArgumentNotValidException ex) {
         log.error("Bad request: {}", ex.getMessage(), ex);
         return ApiError.builder()
                 .errors(getErrorMessages(ex))

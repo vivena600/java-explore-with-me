@@ -24,7 +24,7 @@ public class AdminUserController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public ResponseEntity<List<UserDto>> getUser(@RequestParam List<Long> ids,
+    public ResponseEntity<List<UserDto>> getUser(@RequestParam(required = false) List<Long> ids,
                                                  @RequestParam(defaultValue = "0") Integer from,
                                                  @RequestParam(defaultValue = "10") Integer size) {
         log.info("GET /admin/users");

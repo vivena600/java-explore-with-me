@@ -12,7 +12,7 @@ import ru.practicum.ewmservice.admin.mapper.UserMapper;
 import ru.practicum.ewmservice.base.model.User;
 import ru.practicum.ewmservice.base.repository.UserRepository;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +24,14 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Transactional(readOnly = true)
     @Override
     public List<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
-        if (ids == null || ids.isEmpty()) {
+        if (ids == null) {
             log.info("get users from {} size {}", from, size);
             return userRepository.findAll(PageRequest.of(from, size))
                     .stream()
                     .map(userMapper::mapUser)
                     .toList();
+        } else if (ids.isEmpty()) {
+            return new ArrayList<>();
         } else {
             log.info("getUsers ids: {}", ids);
             return userRepository.findAllById(ids)
