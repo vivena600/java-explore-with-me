@@ -51,7 +51,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
         return entityManager.createQuery(query)
                 .setFirstResult(params.getFrom())
-                .setMaxResults(params.getFrom() + params.getSize())
+                .setMaxResults(params.getSize())
                 .getResultList();
     }
 
@@ -64,20 +64,21 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         List<Predicate> predicates = new ArrayList<>();
 
         if (params.getCategories() != null && !params.getCategories().isEmpty()) {
-            predicates.add(criteriaBuilder.equal(root.get("categoryId").get("id")
-                    .in(params.getCategories()), entityManager));
+            predicates.add(root.get("categoryId").get("id").in(params.getCategories()));
         }
 
         if (params.getText() != null && !params.getText().isEmpty()) {
-            predicates.add(criteriaBuilder.like(root.get("text"), params.getText()));
+            String pattern = "%" + params.getText().toLowerCase() + "%";
+            predicates.add(
+                    criteriaBuilder.or(
+                            criteriaBuilder.like(criteriaBuilder.lower(root.get("annotation")), pattern),
+                            criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), pattern)
+                    )
+            );
         }
 
         if (params.getPaid() != null) {
             predicates.add(criteriaBuilder.equal(root.get("paid"), params.getPaid()));
-        }
-
-        if (params.getOnlyAvailable() != null) {
-            predicates.add(criteriaBuilder.equal(root.get("onlyAvailable").get("id"), params.getOnlyAvailable()));
         }
 
         if (params.getRangeStart() != null) {
@@ -88,11 +89,22 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("date"), params.getRangeEnd()));
         }
 
+        if (params.getOnlyAvailable() != null && params.getOnlyAvailable()) {
+            predicates.add(criteriaBuilder.lt(root.get("confirmedRequests"), root.get("participantLimit")));
+        }
+
         query.select(root).where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+
+        //Сортировка
+        if ("EVENT_DATE".equalsIgnoreCase(params.getSort())) {
+            query.orderBy(criteriaBuilder.asc(root.get("date")));
+        } else if ("VIEWS".equalsIgnoreCase(params.getSort())) {
+            query.orderBy(criteriaBuilder.desc(root.get("views")));
+        }
 
         return entityManager.createQuery(query)
                 .setFirstResult(params.getFrom())
-                .setMaxResults(params.getFrom() + params.getSize())
+                .setMaxResults(params.getSize())
                 .getResultList();
     }
 }

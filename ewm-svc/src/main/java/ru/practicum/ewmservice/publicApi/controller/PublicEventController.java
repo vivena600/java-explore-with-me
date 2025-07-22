@@ -1,11 +1,15 @@
 package ru.practicum.ewmservice.publicApi.controller;
 
 import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewmservice.base.dto.event.FullEventDto;
 import ru.practicum.ewmservice.base.dto.event.ShortEventDto;
 import ru.practicum.ewmservice.publicApi.dto.RequestEventDto;
+import ru.practicum.ewmservice.publicApi.service.PublicEventService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,7 +17,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/events")
 @Slf4j
+@RequiredArgsConstructor
 public class PublicEventController {
+    private final PublicEventService eventService;
 
     /***
      * Писк полной информации о событиях
@@ -27,11 +33,15 @@ public class PublicEventController {
      * @return
      */
     @GetMapping
-    ResponseEntity<ShortEventDto> getEvents(@RequestParam(required = false) String text,
+    ResponseEntity<List<ShortEventDto>> getEvents(@RequestParam(required = false) String text,
                                             @RequestParam(required = false)  List<Long> categories,
                                             @RequestParam(required = false)  Boolean paid,
-                                            @RequestParam(required = false)LocalDateTime rangeStart,
-                                            @RequestParam(required = false)LocalDateTime rangeEnd,
+                                            @RequestParam(required = false)
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                            LocalDateTime rangeStart,
+                                            @RequestParam(required = false)
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                            LocalDateTime rangeEnd,
                                             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                             @RequestParam(defaultValue = "EVENT_DATE") String sort,
                                             @RequestParam(defaultValue = "0") Integer from,
@@ -48,11 +58,14 @@ public class PublicEventController {
                 .from(from)
                 .size(size)
                 .build();
-        return null;
+        List<ShortEventDto> result = eventService.getEvents(request);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShortEventDto> getEvent(@PathVariable @Positive Long id) {
-        return null;
+    public ResponseEntity<FullEventDto> getEvent(@PathVariable @Positive Long id) {
+        log.info("GET /event/{}", id);
+        FullEventDto full = eventService.getEventById(id);
+        return ResponseEntity.ok(full);
     }
 }

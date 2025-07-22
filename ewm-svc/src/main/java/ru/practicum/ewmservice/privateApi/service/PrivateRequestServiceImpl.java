@@ -1,6 +1,7 @@
 package ru.practicum.ewmservice.privateApi.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmservice.base.dto.event.ParticipationRequestDto;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PrivateRequestServiceImpl implements PrivateRequestService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
@@ -34,7 +36,17 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         Event event = checkEventById(eventId);
         User user = checkUserById(userId);
 
-        List<Request> requests = requestRepository.findByEventId(eventId, userId);
+        List<Request> requests = requestRepository.findByEventId(eventId);
+        return requests.stream()
+                .map(requestMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ParticipationRequestDto> getRequestByUserId(Long userId) {
+        User user = checkUserById(userId);
+        List<Request> requests = requestRepository.findByUserId(userId);
         return requests.stream()
                 .map(requestMapper::toDto)
                 .toList();
@@ -61,12 +73,24 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
 
         ParticipationRequestDto createdRequest = ParticipationRequestDto.builder()
                 .created(LocalDateTime.now())
-                .status(!event.getRequestModeration() ? StateRequestEvent.PUBLISHED : StateRequestEvent.PENDING)
+                .status(!event.getRequestModeration() ? StateRequestEvent.CONFIRMED : StateRequestEvent.PENDING)
                 .requester(user.getId())
                 .event(event.getId())
                 .build();
 
         return requestMapper.toDto(requestRepository.save(requestMapper.fromDto(createdRequest, user, event)));
+    }
+
+    @Override
+    public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
+        log.info("Cancel Request with id=" + requestId);
+        checkUserById(userId);
+        Request request = checkRequestById(requestId);
+        checkUniqueRequest(userId, requestId);
+
+        request.setState(StateRequestEvent.REJECTED);
+        Request updatedRequest = requestRepository.save(request);
+        return requestMapper.toDto(updatedRequest);
     }
 
     private Event checkEventById(Long eventId) {
@@ -79,8 +103,14 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
                 .orElseThrow(() -> new NotFoundException("User with id= " + userId + " was not found"));
     }
 
+    private Request checkRequestById(Long requestId) {
+        return requestRepository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("Request with id= " + requestId + " was not found"));
+    }
+
+
     private void checkUniqueRequest(Long userId, Long eventId) {
-        List<Request> requests = requestRepository.findByEventId(eventId,userId);
+        List<Request> requests = requestRepository.findByEventIdAndUserId(eventId,userId);
         if (requests.size() > 0) {
             throw new ConflictException("Request with id=" + eventId + " already exists");
         }

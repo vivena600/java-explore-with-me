@@ -1,9 +1,7 @@
 package ru.practicum.ewmservice.privateApi.service;
 
-import ru.practicum.ewmservice.base.dto.event.AddEventDto;
-import ru.practicum.ewmservice.base.dto.event.FullEventDto;
-import ru.practicum.ewmservice.base.dto.event.ShortEventDto;
-import ru.practicum.ewmservice.base.dto.event.UpdateEventUserDto;
+import org.apache.coyote.BadRequestException;
+import ru.practicum.ewmservice.base.dto.event.*;
 
 import java.util.List;
 
@@ -16,4 +14,7 @@ public interface PrivateEventService {
     FullEventDto getEventById(Long userId, Long eventId);
 
     FullEventDto updateEvent(Long userId, Long eventId, UpdateEventUserDto dto);
+
+    EventRequestStatusUpdateResultDto updateStatusRequestEvent(Long userId, Long eventId,
+                                                               EventRequestStatusUpdateDto dto);
 }

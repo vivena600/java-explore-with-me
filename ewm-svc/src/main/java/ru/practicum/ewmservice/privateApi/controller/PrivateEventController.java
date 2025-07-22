@@ -16,7 +16,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.ewmservice.base.dto.event.*;
+import ru.practicum.ewmservice.base.dto.event.AddEventDto;
+import ru.practicum.ewmservice.base.dto.event.EventRequestStatusUpdateDto;
+import ru.practicum.ewmservice.base.dto.event.EventRequestStatusUpdateResultDto;
+import ru.practicum.ewmservice.base.dto.event.FullEventDto;
+import ru.practicum.ewmservice.base.dto.event.ParticipationRequestDto;
+import ru.practicum.ewmservice.base.dto.event.ShortEventDto;
+import ru.practicum.ewmservice.base.dto.event.UpdateEventUserDto;
 import ru.practicum.ewmservice.privateApi.service.PrivateEventService;
 import ru.practicum.ewmservice.privateApi.service.PrivateRequestService;
 
@@ -65,6 +71,14 @@ public class PrivateEventController {
         log.info("PATCH /users/{}/events/{}", userId, eventId);
         FullEventDto result = eventService.updateEvent(userId, eventId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @PatchMapping("/{eventId}/requests")
+    public ResponseEntity<EventRequestStatusUpdateResultDto> updateRequestEvent(@PathVariable @Positive Long userId,
+                                                     @PathVariable @Positive Long eventId,
+                                                     @RequestBody EventRequestStatusUpdateDto dto) {
+        log.info("PATCH /users/{}/events/{}/requests", userId, eventId);
+        return ResponseEntity.ok(eventService.updateStatusRequestEvent(userId, eventId, dto));
     }
 
     @GetMapping("/{eventId}/requests")

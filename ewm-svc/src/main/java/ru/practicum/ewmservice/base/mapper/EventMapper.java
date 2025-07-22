@@ -61,6 +61,7 @@
                     .initiator(user)
                     .category(category)
                     .annotation(event.getAnnotation())
+                    .views(event.getViews())
                     .build();
         }
     }

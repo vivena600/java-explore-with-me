@@ -69,6 +69,10 @@ public class AdminEventServiceImpl implements AdminEventService {
             checkEventDate(eventDto.getEventDate());
         }
 
+        if (eventDto.getPaid() != null) {
+            oldEvent.setPaid(eventDto.getPaid());
+        }
+
         if (eventDto.getEventDate() != null) {
             oldEvent.setDate(eventDto.getEventDate());
         }
