@@ -69,8 +69,6 @@ public class AdminEventServiceImpl implements AdminEventService {
             checkEventDate(eventDto.getEventDate());
         }
 
-        oldEvent.setPublishedOn(LocalDateTime.now());
-
         if (eventDto.getEventDate() != null) {
             oldEvent.setDate(eventDto.getEventDate());
         }
@@ -106,7 +104,10 @@ public class AdminEventServiceImpl implements AdminEventService {
             oldEvent.setCategoryId(category);
         }
 
+        oldEvent.setPublishedOn(LocalDateTime.now());
+
         Event savedEvent = eventRepository.save(oldEvent);
+        log.info("successes update");
         return eventMapper.toFullEventDto(savedEvent, userMapper.mapUserShortDto(savedEvent.getUserId()),
                 categoryMapper.mapCategory(category));
     }

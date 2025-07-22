@@ -1,8 +1,10 @@
 package ru.practicum.ewmservice.admin.controller;
 
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmservice.admin.dto.RequestGetEventsDto;
@@ -35,9 +37,13 @@ public class AdminEventController {
     public ResponseEntity<List<FullEventDto>> searchEvents(@RequestParam(required = false) List<Long> users,
                                                            @RequestParam(required = false) List<String> states,
                                                            @RequestParam(required = false) List<Long> categories,
-                                                           @RequestParam(required = false) LocalDateTime rangeStart,
-                                                           @RequestParam(required = false) LocalDateTime rangeEnd,
-                                                           @RequestParam(defaultValue = "0") @Positive Integer from,
+                                                           @RequestParam(required = false)
+                                                               @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                               LocalDateTime rangeStart,
+                                                           @RequestParam(required = false)
+                                                               @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                               LocalDateTime rangeEnd,
+                                                           @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
                                                            @RequestParam(defaultValue = "10") @Positive Integer size) {
         log.info("GET /admin/events");
         RequestGetEventsDto param = RequestGetEventsDto.builder()

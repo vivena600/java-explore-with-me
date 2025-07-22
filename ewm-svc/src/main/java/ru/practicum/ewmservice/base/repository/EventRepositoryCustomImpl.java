@@ -28,12 +28,11 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         List<Predicate> predicates = new ArrayList<>();
 
         if (params.getUsers() != null && !params.getUsers().isEmpty()) {
-            predicates.add(criteriaBuilder.equal(root.get("users").get("id").in(params.getUsers()), entityManager));
+            predicates.add(root.get("userId").get("id").in(params.getUsers()));
         }
 
         if (params.getCategories() != null && !params.getCategories().isEmpty()) {
-            predicates.add(criteriaBuilder.equal(root.get("category").get("id")
-                    .in(params.getCategories()), entityManager));
+            predicates.add(root.get("categoryId").get("id").in(params.getCategories()));
         }
 
         if (params.getStates() != null && !params.getStates().isEmpty()) {
@@ -41,11 +40,11 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         }
 
         if (params.getRangeStart() != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), params.getRangeStart()));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("date"), params.getRangeStart()));
         }
 
         if (params.getRangeEnd() != null) {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), params.getRangeEnd()));
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("date"), params.getRangeEnd()));
         }
 
         query.select(root).where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
@@ -65,7 +64,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         List<Predicate> predicates = new ArrayList<>();
 
         if (params.getCategories() != null && !params.getCategories().isEmpty()) {
-            predicates.add(criteriaBuilder.equal(root.get("category").get("id")
+            predicates.add(criteriaBuilder.equal(root.get("categoryId").get("id")
                     .in(params.getCategories()), entityManager));
         }
 
@@ -74,7 +73,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         }
 
         if (params.getPaid() != null) {
-            predicates.add(criteriaBuilder.equal(root.get("paid").get("id"), params.getPaid()));
+            predicates.add(criteriaBuilder.equal(root.get("paid"), params.getPaid()));
         }
 
         if (params.getOnlyAvailable() != null) {
@@ -82,11 +81,11 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         }
 
         if (params.getRangeStart() != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), params.getRangeStart()));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("date"), params.getRangeStart()));
         }
 
         if (params.getRangeEnd() != null) {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), params.getRangeEnd()));
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("date"), params.getRangeEnd()));
         }
 
         query.select(root).where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
