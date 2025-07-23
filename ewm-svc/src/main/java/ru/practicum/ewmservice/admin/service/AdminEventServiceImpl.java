@@ -53,15 +53,17 @@ public class AdminEventServiceImpl implements AdminEventService {
         log.info("updateEvent eventDto={}", eventDto.toString());
         Event oldEvent = checkEventById(eventId);
 
-        if (oldEvent.getState().equals(EventState.PUBLISHED)) {
-            throw new ConflictException("Cannot publish the event because it's not in the right state: PUBLISHED");
-        } else if (oldEvent.getState().equals(EventState.CANCELED)) {
-            throw new ConflictException("Cannot publish the event because it's not in the right state: CANCELED");
-        } else {
-            if (eventDto.getStateAction().equals(EventStateActionAdmin.PUBLISH_EVENT)) {
-                oldEvent.setState(EventState.PUBLISHED);
-            } else if (eventDto.getStateAction().equals(EventStateActionAdmin.REJECT_EVENT)) {
-                oldEvent.setState(EventState.CANCELED);
+        if (eventDto.getStateAction() != null) {
+            if (oldEvent.getState().equals(EventState.PUBLISHED)) {
+                throw new ConflictException("Cannot publish the event because it's not in the right state: PUBLISHED");
+            } else if (oldEvent.getState().equals(EventState.CANCELED)) {
+                throw new ConflictException("Cannot publish the event because it's not in the right state: CANCELED");
+            } else {
+                if (eventDto.getStateAction().equals(EventStateActionAdmin.PUBLISH_EVENT)) {
+                    oldEvent.setState(EventState.PUBLISHED);
+                } else if (eventDto.getStateAction().equals(EventStateActionAdmin.REJECT_EVENT)) {
+                    oldEvent.setState(EventState.CANCELED);
+                }
             }
         }
 

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.ewmservice.base.model.Event;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long>, EventRepositoryCustom {
@@ -13,5 +14,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
             "WHERE e.id = :eventId AND e.userId.id = :userId")
     Optional<Event> findByIdAndUserId(@Param("userId") Long userId,
                                       @Param("eventId") Long eventId);
+
+    List<Event> findAllByIdIn(List<Long> ids);
 
 }

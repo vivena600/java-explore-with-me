@@ -1,9 +1,11 @@
 package ru.practicum.ewmservice.base.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,9 +18,9 @@ import java.util.List;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError badRequest(final BadRequestException ex) {
+    public ApiError badRequest(final Exception ex) {
         log.error("Bad request: {}", ex.getMessage(), ex);
         return ApiError.builder()
                 .errors(getErrorMessages(ex))
@@ -28,26 +30,14 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError validationException(final ValidationException ex) {
-        log.error("Bad request: {}", ex.getMessage(), ex);
+    public ApiError handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        log.error("Invalid JSON input: {}", ex.getMessage(), ex);
         return ApiError.builder()
-                .errors(getErrorMessages(ex))
+                .errors(List.of(ex.getMostSpecificCause().getMessage()))
                 .status(HttpStatus.BAD_REQUEST)
-                .message(ex.getMessage())
-                .reason("Incorrectly made request.")
-                .build();
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError methodValidationException(final MethodArgumentNotValidException ex) {
-        log.error("Bad request: {}", ex.getMessage(), ex);
-        return ApiError.builder()
-                .errors(getErrorMessages(ex))
-                .status(HttpStatus.BAD_REQUEST)
-                .message(ex.getMessage())
+                .message("Malformed JSON or wrong data")
                 .reason("Incorrectly made request.")
                 .build();
     }

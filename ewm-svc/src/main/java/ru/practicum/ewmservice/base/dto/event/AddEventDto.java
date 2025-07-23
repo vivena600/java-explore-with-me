@@ -4,12 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.*;
 import lombok.Builder.Default;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
@@ -18,6 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class AddEventDto {
     @NotBlank
@@ -37,12 +35,11 @@ public class AddEventDto {
 
     LocationDto location;
 
-    @NotNull
-    private Boolean paid;
-
-    @NotNull
     @Default()
-    @Positive
+    private Boolean paid = false;
+
+    @Default()
+    @PositiveOrZero
     private Integer participantLimit = 0;
 
     @Default()
