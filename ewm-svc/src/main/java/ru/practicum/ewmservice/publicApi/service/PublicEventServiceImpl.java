@@ -32,6 +32,7 @@ public class PublicEventServiceImpl implements PublicEventService {
     private final UserMapper userMapper;
     private final CategoryMapper categoryMapper;
     private final StatClient client;
+    private static final String nameApp = "ewm-service";
 
     @Override
     @Transactional(readOnly = true)
@@ -67,7 +68,7 @@ public class PublicEventServiceImpl implements PublicEventService {
                 .timestamp(LocalDateTime.now())
                 .ip(request.getRemoteAddr())
                 .uri(request.getRequestURI())
-                .app(request.getServletPath())
+                .app(nameApp)
                 .build();
 
         client.saveHit(hitDto);
