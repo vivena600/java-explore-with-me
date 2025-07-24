@@ -30,6 +30,11 @@ services:
     container_name: ewm
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/main
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=user
+      - EXPLORE_WITH_ME_STAT_SVC_URL=http://stat:9090
     depends_on:
       - ewm-db
 
@@ -38,3 +43,7 @@ services:
     container_name: ewm-db
     ports:
     - "6542:5432"
+    environment:
+      - POSTGRES_DB=main
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user

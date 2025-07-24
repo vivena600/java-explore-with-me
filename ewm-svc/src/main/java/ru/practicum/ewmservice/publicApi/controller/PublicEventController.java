@@ -1,5 +1,6 @@
 package ru.practicum.ewmservice.publicApi.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,9 +46,10 @@ public class PublicEventController {
                                             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                             @RequestParam(defaultValue = "EVENT_DATE") String sort,
                                             @RequestParam(defaultValue = "0") Integer from,
-                                            @RequestParam(defaultValue = "10") Integer size) {
+                                            @RequestParam(defaultValue = "10") Integer size,
+                                            HttpServletRequest request) {
         log.info("GET /event");
-        RequestEventDto request = RequestEventDto.builder()
+        RequestEventDto requestParam = RequestEventDto.builder()
                 .text(text)
                 .categories(categories)
                 .paid(paid)
@@ -58,14 +60,15 @@ public class PublicEventController {
                 .from(from)
                 .size(size)
                 .build();
-        List<ShortEventDto> result = eventService.getEvents(request);
+        List<ShortEventDto> result = eventService.getEvents(requestParam, request);
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FullEventDto> getEvent(@PathVariable @Positive Long id) {
+    public ResponseEntity<FullEventDto> getEvent(@PathVariable @Positive Long id,
+                                                 HttpServletRequest request) {
         log.info("GET /event/{}", id);
-        FullEventDto full = eventService.getEventById(id);
+        FullEventDto full = eventService.getEventById(id, request);
         return ResponseEntity.ok(full);
     }
 }

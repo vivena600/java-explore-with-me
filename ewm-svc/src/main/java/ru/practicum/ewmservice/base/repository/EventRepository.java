@@ -10,10 +10,14 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long>, EventRepositoryCustom {
 
-    @Query("SELECT e FROM Event e " +
-            "WHERE e.id = :eventId AND e.userId.id = :userId")
+    @Query("SELECT e FROM Event e "
+            + "WHERE e.id = :eventId AND e.userId.id = :userId")
     Optional<Event> findByIdAndUserId(@Param("userId") Long userId,
                                       @Param("eventId") Long eventId);
+
+    @Query("SELECT e FROM Event e "
+            + "WHERE e.categoryId.id = :id")
+    List<Event> findAllByCategoryId(@Param("id") Long categoryId);
 
     List<Event> findAllByIdIn(List<Long> ids);
 

@@ -2,19 +2,23 @@ package ru.practicum.ewmservice.privateApi.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmservice.admin.mapper.CategoryMapper;
 import ru.practicum.ewmservice.admin.mapper.UserMapper;
 import ru.practicum.ewmservice.base.dto.category.CategoryDto;
-import ru.practicum.ewmservice.base.dto.event.*;
+import ru.practicum.ewmservice.base.dto.event.AddEventDto;
+import ru.practicum.ewmservice.base.dto.event.EventRequestStatusUpdateDto;
+import ru.practicum.ewmservice.base.dto.event.EventRequestStatusUpdateResultDto;
+import ru.practicum.ewmservice.base.dto.event.FullEventDto;
+import ru.practicum.ewmservice.base.dto.event.ParticipationRequestDto;
+import ru.practicum.ewmservice.base.dto.event.ShortEventDto;
+import ru.practicum.ewmservice.base.dto.event.UpdateEventUserDto;
 import ru.practicum.ewmservice.base.dto.user.UserShortDto;
 import ru.practicum.ewmservice.base.enums.EventState;
 import ru.practicum.ewmservice.base.enums.EventStateAction;
 import ru.practicum.ewmservice.base.enums.StateRequestEvent;
-import ru.practicum.ewmservice.base.enums.StatusEventRequest;
 import ru.practicum.ewmservice.base.exception.ConflictException;
 import ru.practicum.ewmservice.base.exception.NotFoundException;
 import ru.practicum.ewmservice.base.mapper.EventMapper;
@@ -63,6 +67,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         event.setPublishedOn(LocalDateTime.now());
         event.setUserId(user);
         event.setViews(0L);
+        event.setConfirmedRequests(0L);
         UserShortDto userShortDto = userMapper.mapUserShortDto(user);
         CategoryDto categoryDto = categoryMapper.mapCategory(category);
         return eventMapper.toFullEventDto(eventRepository.save(event), userShortDto, categoryDto);
@@ -149,6 +154,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Transactional
     public EventRequestStatusUpdateResultDto updateStatusRequestEvent(Long userId, Long eventId,
                                                                       EventRequestStatusUpdateDto dto) {
+        log.info("Update status request {}", dto.toString());
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found with id = " + eventId));
 
@@ -170,20 +176,21 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
          */
 
-        if (dto.getStatus().equals(StatusEventRequest.CONFIRMED)) {
+        if (dto.getStatus().equals(StateRequestEvent.CONFIRMED)) {
             confirmedRequests = requests.stream()
                     .peek(request -> {
-                        if (event.getConfirmedRequests() != null && event.getConfirmedRequests() >= event.getParticipantLimit()) {
+                        if (event.getConfirmedRequests() != null && event.getConfirmedRequests()
+                                >= event.getParticipantLimit()) {
                             throw new ConflictException("The participant limit has been reached");
                         }
-                        event.setConfirmedRequests(event.getConfirmedRequests() == null ? 1 :
-                                event.getConfirmedRequests() + 1);
+                        event.setConfirmedRequests(event.getConfirmedRequests() == null ? 1
+                                : event.getConfirmedRequests() + 1);
                         request.setState(StateRequestEvent.CONFIRMED);
                     })
                     .map(requestMapper::toDto)
                     .toList();
 
-        } else if (dto.getStatus().equals(StatusEventRequest.REJECTED)) {
+        } else if (dto.getStatus().equals(StateRequestEvent.REJECTED)) {
             rejectedRequests = requests.stream()
                     .peek(request -> request.setState(StateRequestEvent.REJECTED))
                     .map(requestMapper::toDto)
@@ -210,14 +217,14 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
     private Event checkEventByIdAndUserId(Long eventId, Long userId) {
         return eventRepository.findByIdAndUserId(userId, eventId)
-                .orElseThrow(() -> new NotFoundException("Event not found with id = " + eventId +
-                        " and userId = " + userId));
+                .orElseThrow(() -> new NotFoundException("Event not found with id = " + eventId
+                        + " and userId = " + userId));
     }
 
     private void checkEventTime(LocalDateTime event) {
-        if (event == null && event.isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ConflictException("Field: eventDate. Error: the date and time for which the event is scheduled " +
-                    "cannot be earlier than two hours from the current moment. Value: " + event);
+        if (event != null && event.isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new ConflictException("Field: eventDate. Error: the date and time for which the event is scheduled "
+                    + "cannot be earlier than two hours from the current moment. Value: " + event);
         }
     }
 }

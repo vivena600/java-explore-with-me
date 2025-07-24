@@ -1,6 +1,7 @@
 package ru.practicum.ewmservice.admin.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class RequestUpdateEventDto {
     private String title;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Future
     private LocalDateTime eventDate;
 
     private LocationDto location;

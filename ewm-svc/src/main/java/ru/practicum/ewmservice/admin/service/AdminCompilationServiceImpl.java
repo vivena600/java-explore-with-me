@@ -82,7 +82,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     }
 
     private Set<Event> checkEvents(List<Long> events) {
-        return events == null ? Collections.emptySet() :
-                new HashSet<>(eventRepository.findAllByIdIn(events));
+        return events == null ? Collections.emptySet()
+                : new HashSet<>(eventRepository.findAllByIdIn(events));
     }
 }

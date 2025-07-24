@@ -102,22 +102,5 @@ public class AdminUserServiceImplTest {
 
             verify(userRepository, times(1)).findAllById(List.of(failId));
         }
-
-        /*
-        @Test
-        public void getUsersFindAll() {
-            when(userRepository.findAll(PageRequest.of(0, 1)))
-                    .thenReturn(new PageImpl<>(List.of(user)));
-
-            List<UserDto> result = adminUserService.getUsers(null, 0, 1);
-
-            assertNotNull(result);
-            checkUser(result.get(0), userDto);
-m
-            verify(userRepository, times(1)).findAll();
-            verify(userMapper, times(1)).mapUser(user);
-        }
-
-         */
     }
 }

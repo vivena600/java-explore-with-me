@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.ewmservice.base.enums.StatusEventRequest;
+import ru.practicum.ewmservice.base.enums.StateRequestEvent;
 
 import java.util.List;
 
@@ -14,5 +14,5 @@ import java.util.List;
 @ToString
 public class EventRequestStatusUpdateDto {
     private List<Long> requestIds;
-    private StatusEventRequest status;
+    private StateRequestEvent status;
 }

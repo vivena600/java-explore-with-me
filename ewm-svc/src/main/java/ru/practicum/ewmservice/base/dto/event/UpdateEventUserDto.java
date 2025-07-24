@@ -1,6 +1,8 @@
 package ru.practicum.ewmservice.base.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,12 +27,14 @@ public class UpdateEventUserDto {
     private String title;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Future
     private LocalDateTime eventDate;
 
     private LocationDto location;
 
     private Boolean paid;
 
+    @Positive
     private Integer participantLimit;
 
     private Boolean requestModeration;

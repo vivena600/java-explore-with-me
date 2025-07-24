@@ -1,12 +1,17 @@
 package ru.practicum.ewmservice.base.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Builder.Default;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
@@ -30,6 +35,7 @@ public class AddEventDto {
     private String description;
 
     @NotNull
+    @Future
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 

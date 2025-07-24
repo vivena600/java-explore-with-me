@@ -12,7 +12,8 @@ import ru.practicum.ewmservice.admin.mapper.UserMapper;
 import ru.practicum.ewmservice.base.model.User;
 import ru.practicum.ewmservice.base.repository.UserRepository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -59,6 +60,6 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     private User checkUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User with id=" + id + " was not found") );
+                .orElseThrow(() -> new NotFoundException("User with id=" + id + " was not found"));
     }
 }

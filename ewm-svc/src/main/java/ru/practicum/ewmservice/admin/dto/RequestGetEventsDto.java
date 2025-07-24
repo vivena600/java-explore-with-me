@@ -1,7 +1,11 @@
 package ru.practicum.ewmservice.admin.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;

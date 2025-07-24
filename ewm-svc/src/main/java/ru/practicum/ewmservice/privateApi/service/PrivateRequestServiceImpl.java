@@ -67,16 +67,28 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
             throw new ConflictException("You cannot participate in an unpublished event");
         }
 
-        if (event.getConfirmedRequests() != null && event.getParticipantLimit() < event.getConfirmedRequests()) {
+        if (event.getConfirmedRequests() != null && event.getParticipantLimit() != 0 && event.getParticipantLimit()
+                <= event.getConfirmedRequests()) {
             throw new ConflictException("Event participant limit exceeded");
         }
 
         ParticipationRequestDto createdRequest = ParticipationRequestDto.builder()
                 .created(LocalDateTime.now())
-                .status(!event.getRequestModeration() ? StateRequestEvent.CONFIRMED : StateRequestEvent.PENDING)
+                .status((!event.getRequestModeration() || event.getParticipantLimit() == 0)
+                        ? StateRequestEvent.CONFIRMED : StateRequestEvent.PENDING)
                 .requester(user.getId())
                 .event(event.getId())
                 .build();
+
+        //вычисление ConfirmedRequest
+        if (event.getConfirmedRequests() == null) {
+            event.setConfirmedRequests(0L);
+        }
+        event.setConfirmedRequests(createdRequest.getStatus() == StateRequestEvent.CONFIRMED
+                ? event.getConfirmedRequests() + 1 : event.getConfirmedRequests());
+        eventRepository.save(event);
+
+        log.info("Created request {}", createdRequest);
 
         return requestMapper.toDto(requestRepository.save(requestMapper.fromDto(createdRequest, user, event)));
     }
@@ -88,7 +100,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         Request request = checkRequestById(requestId);
         checkUniqueRequest(userId, requestId);
 
-        request.setState(StateRequestEvent.REJECTED);
+        request.setState(StateRequestEvent.CANCELED);
         Request updatedRequest = requestRepository.save(request);
         return requestMapper.toDto(updatedRequest);
     }
@@ -110,8 +122,8 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
 
 
     private void checkUniqueRequest(Long userId, Long eventId) {
-        List<Request> requests = requestRepository.findByEventIdAndUserId(eventId,userId);
-        if (requests.size() > 0) {
+        List<Request> requests = requestRepository.findByEventIdAndUserId(eventId, userId);
+        if (!requests.isEmpty()) {
             throw new ConflictException("Request with id=" + eventId + " already exists");
         }
     }

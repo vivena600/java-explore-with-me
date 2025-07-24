@@ -7,7 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewmservice.admin.dto.RequestGetEventsDto;
 import ru.practicum.ewmservice.admin.dto.RequestUpdateEventDto;
 import ru.practicum.ewmservice.admin.service.AdminEventService;
@@ -39,12 +45,13 @@ public class AdminEventController {
                                                            @RequestParam(required = false) List<String> states,
                                                            @RequestParam(required = false) List<Long> categories,
                                                            @RequestParam(required = false)
-                                                               @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                                               LocalDateTime rangeStart,
+                                                           @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                           LocalDateTime rangeStart,
                                                            @RequestParam(required = false)
-                                                               @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                                               LocalDateTime rangeEnd,
-                                                           @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                                           @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                           LocalDateTime rangeEnd,
+                                                           @RequestParam(defaultValue = "0")
+                                                           @PositiveOrZero Integer from,
                                                            @RequestParam(defaultValue = "10") @Positive Integer size) {
         log.info("GET /admin/events");
         RequestGetEventsDto param = RequestGetEventsDto.builder()

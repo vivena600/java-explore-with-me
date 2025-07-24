@@ -67,15 +67,12 @@ public class AdminEventServiceImpl implements AdminEventService {
             }
         }
 
-        if (eventDto.getEventDate() != null) {
-            checkEventDate(eventDto.getEventDate());
-        }
-
         if (eventDto.getPaid() != null) {
             oldEvent.setPaid(eventDto.getPaid());
         }
 
         if (eventDto.getEventDate() != null) {
+            checkEventDate(eventDto.getEventDate());
             oldEvent.setDate(eventDto.getEventDate());
         }
 
@@ -135,8 +132,8 @@ public class AdminEventServiceImpl implements AdminEventService {
 
     private void checkEventDate(LocalDateTime eventDate) {
         if (eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
-            throw new ConflictException("Field: eventDate. Error: the date and time for which the event is scheduled " +
-                    "cannot be earlier than one hours from the current moment. Value: " + eventDate);
+            throw new ConflictException("Field: eventDate. Error: the date and time for which the event is scheduled "
+                    + "cannot be earlier than one hours from the current moment. Value: " + eventDate);
         }
     }
 }

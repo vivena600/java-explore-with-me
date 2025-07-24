@@ -8,9 +8,11 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.practicum.ewmservice.admin.dto.RequestGetEventsDto;
+import ru.practicum.ewmservice.base.exception.ValidationRequestException;
 import ru.practicum.ewmservice.base.model.Event;
 import ru.practicum.ewmservice.publicApi.dto.RequestEventDto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
     @Override
     public List<Event> searchEventBuAdminParams(RequestGetEventsDto params) {
+        checkDateInRequest(params.getRangeStart(), params.getRangeEnd());
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Event> query = criteriaBuilder.createQuery(Event.class);
         Root<Event> root = query.from(Event.class);
@@ -57,6 +60,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
     @Override
     public List<Event> searchEventByPublicParam(RequestEventDto params) {
+        checkDateInRequest(params.getRangeStart(), params.getRangeEnd());
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Event> query = criteriaBuilder.createQuery(Event.class);
         Root<Event> root = query.from(Event.class);
@@ -106,5 +110,11 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
                 .setFirstResult(params.getFrom())
                 .setMaxResults(params.getSize())
                 .getResultList();
+    }
+
+    private void checkDateInRequest(LocalDateTime start, LocalDateTime end) {
+        if (start != null && end != null && start.isAfter(end)) {
+            throw new ValidationRequestException("start date cannot be after end date");
+        }
     }
 }

@@ -1,15 +1,16 @@
 package ru.practicum.ewmservice.base.exception;
 
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,14 @@ import java.util.List;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
+    @ExceptionHandler({
+            MethodArgumentNotValidException.class,
+            ConstraintViolationException.class,
+            MethodArgumentTypeMismatchException.class,
+            MissingServletRequestParameterException.class,
+            HttpMessageNotReadableException.class,
+            ValidationRequestException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError badRequest(final Exception ex) {
         log.error("Bad request: {}", ex.getMessage(), ex);
@@ -30,19 +38,8 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-        log.error("Invalid JSON input: {}", ex.getMessage(), ex);
-        return ApiError.builder()
-                .errors(List.of(ex.getMostSpecificCause().getMessage()))
-                .status(HttpStatus.BAD_REQUEST)
-                .message("Malformed JSON or wrong data")
-                .reason("Incorrectly made request.")
-                .build();
-    }
 
-    @ExceptionHandler(ConflictException.class)
+    @ExceptionHandler({ConflictException.class, DataIntegrityViolationException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError conflict(final Exception ex) {
         log.error("conflict: {}", ex.getMessage(), ex);
