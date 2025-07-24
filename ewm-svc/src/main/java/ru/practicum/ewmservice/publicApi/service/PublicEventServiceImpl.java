@@ -53,10 +53,10 @@ public class PublicEventServiceImpl implements PublicEventService {
         log.info("get event={}", id);
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + id + " is not published"));
+        saveEndpointHit(request);
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new NotFoundException("Event with id=" + id + " is not published");
         }
-        saveEndpointHit(request);
         event.setViews(event.getViews() + 1);
         eventRepository.save(event);
         return eventMapper.toFullEventDto(event, userMapper.mapUserShortDto(event.getUserId()),
