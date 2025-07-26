@@ -31,7 +31,6 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     private final RequestMapper requestMapper;
 
     @Override
-    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getRequest(Long userId, Long eventId) {
         Event event = checkEventById(eventId);
         User user = checkUserById(userId);
@@ -43,7 +42,6 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getRequestByUserId(Long userId) {
         User user = checkUserById(userId);
         List<Request> requests = requestRepository.findByUserId(userId);

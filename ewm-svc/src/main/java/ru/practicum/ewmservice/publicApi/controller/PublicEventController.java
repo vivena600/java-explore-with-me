@@ -34,10 +34,9 @@ public class PublicEventController {
      * @return
      */
     @GetMapping
-    ResponseEntity<List<ShortEventDto>> getEvents(@RequestParam(required = false) String text,
+    public ResponseEntity<List<ShortEventDto>> getEvents(@RequestParam(required = false) String text,
                                             @RequestParam(required = false)  List<Long> categories,
-                                            @RequestParam(required = false)  Boolean paid,
-                                            @RequestParam(required = false)
+                                            @RequestParam(required = false)  Boolean paid,@RequestParam(required = false)
                                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                             LocalDateTime rangeStart,
                                             @RequestParam(required = false)

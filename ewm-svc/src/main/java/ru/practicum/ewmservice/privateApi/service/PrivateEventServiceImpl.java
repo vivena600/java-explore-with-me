@@ -74,7 +74,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<ShortEventDto> getEvents(Long userId, Integer from, Integer size) {
         log.info("отправка запроса на получение событий пользователя с id {}", userId);
         User user = checkUserById(userId);
@@ -87,7 +86,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public FullEventDto getEventById(Long userId, Long eventId) {
         log.info("Отправка запроса на получение события по его id {}", eventId);
         Event event = checkEventByIdAndUserId(eventId, userId);
@@ -167,14 +165,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
         List<Long> requestId = dto.getRequestIds();
         List<Request> requests = requestRepository.findByRequestId(requestId);
-        /*
-        Boolean conflictStatus = requests.stream()
-                .anyMatch(request -> request.getState().equals(StateRequestEvent.PENDING));
-        if (conflictStatus) {
-            throw new ConflictException("Request must have status PENDING");
-        }
-
-         */
 
         if (dto.getStatus().equals(StateRequestEvent.CONFIRMED)) {
             confirmedRequests = requests.stream()

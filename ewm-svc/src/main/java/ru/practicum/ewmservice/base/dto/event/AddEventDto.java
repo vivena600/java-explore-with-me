@@ -39,7 +39,7 @@ public class AddEventDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
-    LocationDto location;
+    private LocationDto location;
 
     @Default()
     private Boolean paid = false;
