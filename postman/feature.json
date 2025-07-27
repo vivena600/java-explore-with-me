@@ -605,61 +605,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "GetCommentByEventId Copy",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"  pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"const target = pm.response.json();\r",
-									"\r",
-									"pm.test(\"Комментарий должен содержать поля: id, text, created, eventId, userId\", function (){\r",
-									"    pm.expect(target).to.have.property('id');\r",
-									"    pm.expect(target).to.have.property('text');\r",
-									"    pm.expect(target).to.have.property('created');\r",
-									"    pm.expect(target).to.have.property('author');\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/events/:id/comments/:commentId",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"events",
-								":id",
-								"comments",
-								":commentId"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "2"
-								},
-								{
-									"key": "commentId",
-									"value": "2"
-								}
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		}
