@@ -29,7 +29,7 @@ public class AdminCommentServiceImpl implements AdminCommentService {
     @Override
     @Transactional(readOnly = true)
     public List<CommentDto> getCommentsByUserId(Long userId) {
-        log.info("getCommentsByUserId, userId:{}",userId);
+        log.info("getCommentsByUserId, userId:{}", userId);
         checkUserById(userId);
         return commentRepository.findCommentsByUserId(userId).stream()
                 .map(commentMapper::mapCommentToCommentDto)
@@ -42,7 +42,7 @@ public class AdminCommentServiceImpl implements AdminCommentService {
     @Override
     @Transactional
     public void deleteComment(Long commentId) {
-        log.info("deleteComment, commentId:{}",commentId);
+        log.info("deleteComment, commentId:{}", commentId);
         Comment comment = checkCommentById(commentId);
         commentRepository.delete(comment);
         log.info("successes delete comment {}", comment.toString());
