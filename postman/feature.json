@@ -13,39 +13,23 @@
 					"name": "createdComment",
 					"event": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {\r",
-									"  pm.response.to.have.status(201);\r",
-									"});\r",
-									"\r",
-									"const target = pm.response.json();\r",
-									"\r",
-									"pm.test(\"Комментарий должен содержать поля: id, text, created, eventId, userId\", function (){\r",
-									"    pm.expect(target).to.have.property('id');\r",
-									"    pm.expect(target).to.have.property('text');\r",
-									"    pm.expect(target).to.have.property('created');\r",
-									"    pm.expect(target).to.have.property('author');\r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
 							"listen": "prerequest",
 							"script": {
 								"exec": [
 									"const main = async () => {\r",
+									"    if (typeof API === 'undefined' || typeof RandomUtils === 'undefined') {\r",
+									"        throw new Error(\"Api или RandomUtils не определены. Проверьте подключение скриптов.\");\r",
+									"    }\r",
+									"\r",
 									"    const api = new API(pm);\r",
 									"    const rnd = new RandomUtils();\r",
 									"\r",
-									"    let event;\r",
 									"    try {\r",
 									"        const user = await api.addUser(rnd.getUser());\r",
 									"        pm.collectionVariables.set(\"uid\", user.id);\r",
-									"        event = await api.addEvent(rnd.getEvent());\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+									"        compilation = rnd.getCompilation(event.id);\r",
 									"        pm.collectionVariables.set(\"eid\", event.id);\r",
 									"    } catch(err) {\r",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -66,6 +50,27 @@
 									"    },  \r",
 									"    100 \r",
 									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"  pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Комментарий должен содержать поля: id, text, created, eventId, userId\", function (){\r",
+									"    pm.expect(target).to.have.property('id');\r",
+									"    pm.expect(target).to.have.property('text');\r",
+									"    pm.expect(target).to.have.property('created');\r",
+									"    pm.expect(target).to.have.property('author');\r",
+									"});"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -566,6 +571,51 @@
 					"name": "UpdateCommentWithFailTextRemark",
 					"event": [
 						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    if (typeof API === 'undefined' || typeof RandomUtils === 'undefined') {\r",
+									"        throw new Error(\"Api или RandomUtils не определены. Проверьте подключение скриптов.\");\r",
+									"    }\r",
+									"\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set(\"uid\", user.id);\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+									"        compilation = rnd.getCompilation(event.id);\r",
+									"        pm.collectionVariables.set(\"eid\", event.id);\r",
+									"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+									"        pm.collectionVariables.set(\"cid\", comment.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
 							"listen": "test",
 							"script": {
 								"exec": [
@@ -593,23 +643,37 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/users/1/events/2/comment/1",
+							"raw": "{{baseURL}}/users/:userId/events/:eventId/comment/:commentId",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"users",
-								"1",
+								":userId",
 								"events",
-								"2",
+								":eventId",
 								"comment",
-								"1"
+								":commentId"
 							],
 							"query": [
 								{
 									"key": "",
 									"value": null,
 									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								},
+								{
+									"key": "commentId",
+									"value": "{{cid}}"
 								}
 							]
 						}
@@ -624,6 +688,52 @@
 				{
 					"name": "UserDeleteComment",
 					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    if (typeof API === 'undefined' || typeof RandomUtils === 'undefined') {\r",
+									"        throw new Error(\"Api или RandomUtils не определены. Проверьте подключение скриптов.\");\r",
+									"    }\r",
+									"\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        const author = await api.addUser(rnd.getUser()); //Автор комментария\r",
+									"        const user = await api.addUser(rnd.getUser()); //Автор события\r",
+									"        pm.collectionVariables.set(\"uid\", author.id);\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+									"        compilation = rnd.getCompilation(event.id);\r",
+									"        pm.collectionVariables.set(\"eid\", event.id);\r",
+									"        const comment = await api.addComment(author.id, event.id, rnd.getComment());\r",
+									"        pm.collectionVariables.set(\"cid\", comment.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
 						{
 							"listen": "test",
 							"script": {
@@ -656,15 +766,15 @@
 							"variable": [
 								{
 									"key": "userId",
-									"value": "1"
+									"value": "{{uid}}"
 								},
 								{
 									"key": "eventId",
-									"value": "2"
+									"value": "{{eid}}"
 								},
 								{
 									"key": "commentId",
-									"value": "3"
+									"value": "{{cid}}"
 								}
 							]
 						}
