@@ -8,14 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewmservice.base.dto.comment.AddCommentDto;
+import ru.practicum.ewmservice.base.dto.comment.CommentDto;
+import ru.practicum.ewmservice.base.dto.comment.UpdateCommentDto;
 import ru.practicum.ewmservice.base.dto.event.AddEventDto;
 import ru.practicum.ewmservice.base.dto.event.EventRequestStatusUpdateDto;
 import ru.practicum.ewmservice.base.dto.event.EventRequestStatusUpdateResultDto;
@@ -23,6 +19,7 @@ import ru.practicum.ewmservice.base.dto.event.FullEventDto;
 import ru.practicum.ewmservice.base.dto.event.ParticipationRequestDto;
 import ru.practicum.ewmservice.base.dto.event.ShortEventDto;
 import ru.practicum.ewmservice.base.dto.event.UpdateEventUserDto;
+import ru.practicum.ewmservice.privateApi.service.PrivateCommentService;
 import ru.practicum.ewmservice.privateApi.service.PrivateEventService;
 import ru.practicum.ewmservice.privateApi.service.PrivateRequestService;
 
@@ -36,6 +33,7 @@ import java.util.List;
 public class PrivateEventController {
     private final PrivateEventService eventService;
     private final PrivateRequestService requestService;
+    private final PrivateCommentService commentService;
 
     @PostMapping
     public ResponseEntity<FullEventDto> createEvent(@RequestBody @Valid AddEventDto dto,
@@ -86,5 +84,46 @@ public class PrivateEventController {
                                                                     @PathVariable @Positive Long eventId) {
         log.info("GET /users/{}/requests/{}", userId, eventId);
         return ResponseEntity.status(HttpStatus.OK).body(requestService.getRequest(userId, eventId));
+    }
+
+    /**
+     * POST /users/{userId}/events/{eventId}/comment
+     * Создание комментария
+     */
+    @PostMapping("/{eventId}/comment")
+    public ResponseEntity<CommentDto> createComment(@PathVariable @Positive Long userId,
+                                                    @PathVariable @Positive Long eventId,
+                                                    @RequestBody @Valid AddCommentDto dto) {
+        log.info("POST /users/{}/events/{}/comment", userId, eventId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createComment(userId, eventId, dto));
+    }
+
+    /**
+     * PATCH /users/{userId}/events/{eventId}/comment/{commentId}
+     * Редактирование комментария
+     * Обратите внимание, что комментарий может редактировать только автор комментария
+     */
+    @PatchMapping("/{eventId}/comment/{commentId}")
+    public ResponseEntity<CommentDto> updateComment(@PathVariable @Positive Long userId,
+                                                    @PathVariable @Positive Long eventId,
+                                                    @PathVariable @Positive Long commentId,
+                                                    @RequestBody @Valid UpdateCommentDto dto) {
+        log.info("PATCH /users/{}/events/{}/comment", userId, eventId);
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.updateComment(userId, eventId, commentId, dto));
+    }
+
+    /**
+     * DEL /users/{userId}/events/{eventId}/comment/{commentId}
+     * Удаление комментария
+     * Обратите внимание, что комментарий может удалять автор комментария, автор события
+     * или администратор (/admin/comment/{commentId})
+     */
+    @DeleteMapping("/{eventId}/comment/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable @Positive Long userId,
+                                              @PathVariable @Positive Long eventId,
+                                              @PathVariable @Positive Long commentId) {
+        log.info("DELETE /users/{}/events/{}/comment", userId, eventId);
+        commentService.deleteComment(userId, eventId, commentId);
+        return ResponseEntity.noContent().build();
     }
 }

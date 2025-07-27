@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewmservice.base.dto.comment.CommentDto;
 import ru.practicum.ewmservice.base.dto.event.FullEventDto;
 import ru.practicum.ewmservice.base.dto.event.ShortEventDto;
 import ru.practicum.ewmservice.publicApi.dto.RequestEventDto;
+import ru.practicum.ewmservice.publicApi.service.PublicCommentService;
 import ru.practicum.ewmservice.publicApi.service.PublicEventService;
 
 import java.time.LocalDateTime;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PublicEventController {
     private final PublicEventService eventService;
+    private final PublicCommentService commentService;
 
     /***
      * Писк полной информации о событиях
@@ -69,5 +72,26 @@ public class PublicEventController {
         log.info("GET /event/{}", id);
         FullEventDto full = eventService.getEventById(id, request);
         return ResponseEntity.ok(full);
+    }
+
+    /**
+     * GET /events/{id}/comments
+     * Получение всех комментариев под событием
+     */
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<List<CommentDto>> getComments(@PathVariable @Positive Long id) {
+        log.info("GET /event/{}/comments", id);
+        return ResponseEntity.ok(commentService.getComments(id));
+    }
+
+    /**
+     * GET /events/{id}/comments/{commentId}
+     * Получение комментария по его id
+     */
+    @GetMapping("/{id}/comments/{commentId}")
+    public ResponseEntity<CommentDto> getCommentById(@PathVariable @Positive Long id,
+                                                     @PathVariable @Positive Long commentId) {
+        log.info("GET /event/{}/comments/{}", id, commentId);
+        return ResponseEntity.ok(commentService.getCommentById(commentId));
     }
 }
