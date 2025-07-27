@@ -30,6 +30,7 @@ public class AdminEventController {
     private final AdminEventService eventService;
 
     /***
+     *      GET /admin/events
      * Писк полной информации о событиях
      * @param users - список id пользователей
      * @param states - список состояний
@@ -66,6 +67,7 @@ public class AdminEventController {
         List<FullEventDto> result = eventService.getEvents(param);
         return ResponseEntity.ok().body(result);
     }
+
 
     @PatchMapping("/{eventId}")
     public ResponseEntity<FullEventDto> updateEvent(@PathVariable Long eventId,

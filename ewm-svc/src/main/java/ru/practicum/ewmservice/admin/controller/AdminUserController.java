@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.ewmservice.admin.service.AdminCommentService;
+import ru.practicum.ewmservice.base.dto.comment.CommentDto;
 import ru.practicum.ewmservice.base.dto.user.AddUserDto;
 import ru.practicum.ewmservice.base.dto.user.UserDto;
 import ru.practicum.ewmservice.admin.service.AdminUserService;
@@ -29,7 +31,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminUserController {
     private final AdminUserService userService;
+    private final AdminCommentService adminCommentService;
 
+    /**
+     * GET /admin/users
+     */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ResponseEntity<List<UserDto>> getUser(@RequestParam(required = false) List<Long> ids,
@@ -40,6 +46,9 @@ public class AdminUserController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * POST /admin/users
+     */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid AddUserDto userDto) {
@@ -48,11 +57,25 @@ public class AdminUserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
+    /**
+     * DEL /admin/users/{userId}
+     */
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable @Positive Long userId) {
         log.info("DELETE /admin/users/{}", userId);
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * GET /admin/users/{userId}/comments
+     * Просмотр всех комментариев пользователя
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{userId}/comments")
+    public ResponseEntity<List<CommentDto>> getCommentsByUserId(@PathVariable @Positive Long userId) {
+        log.info("GET /admin/users/comments/{}", userId);
+        return ResponseEntity.status(HttpStatus.OK).body(adminCommentService.getCommentsByUserId(userId));
     }
 }

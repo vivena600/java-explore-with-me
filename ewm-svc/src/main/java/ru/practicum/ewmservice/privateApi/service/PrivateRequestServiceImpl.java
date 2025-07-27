@@ -32,8 +32,8 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
 
     @Override
     public List<ParticipationRequestDto> getRequest(Long userId, Long eventId) {
-        Event event = checkEventById(eventId);
-        User user = checkUserById(userId);
+        checkEventById(eventId);
+        checkUserById(userId);
 
         List<Request> requests = requestRepository.findByEventId(eventId);
         return requests.stream()
@@ -43,7 +43,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
 
     @Override
     public List<ParticipationRequestDto> getRequestByUserId(Long userId) {
-        User user = checkUserById(userId);
+        checkUserById(userId);
         List<Request> requests = requestRepository.findByUserId(userId);
         return requests.stream()
                 .map(requestMapper::toDto)
@@ -117,7 +117,6 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         return requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Request with id= " + requestId + " was not found"));
     }
-
 
     private void checkUniqueRequest(Long userId, Long eventId) {
         List<Request> requests = requestRepository.findByEventIdAndUserId(eventId, userId);

@@ -37,7 +37,7 @@ public class AdminCategoryController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{catId}")
     public ResponseEntity<Void> deleteCategory(@PathVariable("catId") @Positive Long catId) {
-        log.info("DELETE /admin/categories/{}", catId );
+        log.info("DELETE /admin/categories/{}", catId);
         adminCategoryService.deleteCategory(catId);
         return ResponseEntity.noContent().build();
     }
@@ -46,7 +46,7 @@ public class AdminCategoryController {
     @PatchMapping("/{catId}")
     public ResponseEntity<CategoryDto> updateCategory(@PathVariable("catId") @Positive Long catId,
                                                       @RequestBody @Valid AddCategoryDto categoryDto) {
-        log.info("PATCH /admin/categories/{}", catId );
+        log.info("PATCH /admin/categories/{}", catId);
         return ResponseEntity.ok(adminCategoryService.updateCategory(catId, categoryDto));
     }
 }
