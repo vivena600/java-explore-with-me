@@ -82,16 +82,19 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
     @Transactional
     public void deleteComment(Long userId, Long eventId, Long commentId) {
         log.info("deleteComment, userId:{}, eventId:{}", userId, eventId);
-        User user = checkUserById(userId);
+        checkUserById(userId);
         Event event = checkEventById(eventId);
         Comment comment = checkCommentById(commentId);
 
-        if (!Objects.equals(comment.getUser().getId(), userId) || !Objects.equals(event.getUserId().getId(), userId)) {
+        boolean isCommentAuthor = comment.getUser().getId().equals(userId);
+        boolean isEventAuthor = event.getUserId().getId().equals(userId);
+
+        if (isCommentAuthor || isEventAuthor) {
+            commentRepository.delete(comment);
+            log.info("successes delete comment {}", comment.toString());
+        } else {
             throw new ConflictException("User with id= " + userId + " is not allowed to delete comment");
         }
-
-        commentRepository.delete(comment);
-        log.info("successes delete comment {}", comment.toString());
     }
 
     private Event checkEventById(Long eventId) {
